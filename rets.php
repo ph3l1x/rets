@@ -16,26 +16,29 @@ $config->setLoginUrl('http://imls.rets.paragonrels.com/rets/fnisrets.aspx/IMLS/l
 
 $rets = new \PHRETS\Session($config);
 $rets->setLogger($log);
-
 $connect = $rets->Login();
-
 $system = $rets->GetSystemMetadata();
-var_dump($system);
-
 $resources = $system->getResources();
 $classes = $resources->first()->getClasses();
-var_dump($classes);
-
 $classes = $rets->GetClassesMetadata('Property');
-var_dump($classes->first());
-
 $objects = $rets->GetObject('Property', 'Photo', '00-1669', '*', 1);
-var_dump($objects);
-
 $fields = $rets->GetTableMetadata('Property', 'A');
-var_dump($fields[0]);
 
-$results = $rets->Search('Property', 'A', '*', ['Limit' => 3, 'Select' => 'RE_1']);
+$results = $rets->Search('Property', 'A', '*', [
+    'QueryType' => 'DMQL2',
+    'Limit' => 1,
+    'Select' => 'RE_1'
+]);
+$results->last();
+$results->first();
+$results->getMetadata();
+$results->getHeaders();
+$results->getTotalResultsCount();
+$all_ids = $results->lists('L_ListingID');
+$results->toJSON();
+$results->toCSV();
+$results->toArray();
+
 foreach ($results as $r) {
     var_dump($r);
 }
