@@ -157,7 +157,6 @@ function purgeImages($selectFields, $rets, $propertyClass, $link) {
         }
     }
 }
-
 function updateListings($selectFields, $rets, $propertyClass, $link) {
 //    $currentIdQuery = "select L_ListingID from Listings";
 //    $rows = mysqli_query($link, $currentIdQuery);

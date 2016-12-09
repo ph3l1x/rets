@@ -5,7 +5,7 @@
  * -m full-image-import
  * -m update-listings
  * -m update-images
- * -m clean-images
+ * -m purge-images
  *
  */
 $arguments = getopt("m:");
