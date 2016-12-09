@@ -1,44 +1,50 @@
 <?php
+/**
+ * Arguments from command line:
+ * -m full-listing-import
+ * -m full-image-import
+ * -m update-listings
+ * -m update-images
+ * -m clean-images
+ *
+ */
+$arguments = getopt("m:");
 
-date_default_timezone_set('America/New_York');
+if($arguments) {
+    date_default_timezone_set('America/Boise');
 
-require_once("vendor/autoload.php");
+    if ($arguments['m'] == 'full-listing-import') {
+        require_once("vendor/autoload.php");
+        require_once("connection.php");
+        fullListingImport($selectFields, $rets, $propertyClass, $link);
 
-$log = new \Monolog\Logger('PHRETS');
-$log->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout', \Monolog\Logger::DEBUG));
+    } elseif ($arguments['m'] == 'update-listings') {
 
-$config = new \PHRETS\Configuration;
-$config->setLoginUrl('http://imls.rets.paragonrels.com/rets/fnisrets.aspx/IMLS/login?rets-version=rets/1.5')
-    ->setUsername('551942')
-    ->setPassword('hrf4p8ky')
-    ->setRetsVersion('1.7.2')
-    ->setUserAgent('DREALTY/1.0');
+        require_once("vendor/autoload.php");
+        require_once("connection.php");
+        updateListings($selectFields, $rets, $propertyClass, $link);
 
-$rets = new \PHRETS\Session($config);
-$rets->setLogger($log);
-$connect = $rets->Login();
-$system = $rets->GetSystemMetadata();
-$resources = $system->getResources();
-$classes = $resources->first()->getClasses();
-$classes = $rets->GetClassesMetadata('Property');
-$objects = $rets->GetObject('Property', 'Photo', '00-1669', '*', 1);
-$fields = $rets->GetTableMetadata('Property', 'A');
+    } elseif ($arguments['m'] == 'full-image-import') {
 
-$results = $rets->Search('Property', 'A', '*', [
-    'QueryType' => 'DMQL2',
-    'Limit' => 1,
-    'Select' => 'RE_1'
-]);
-$results->last();
-$results->first();
-$results->getMetadata();
-$results->getHeaders();
-$results->getTotalResultsCount();
-$all_ids = $results->lists('L_ListingID');
-$results->toJSON();
-$results->toCSV();
-$results->toArray();
+        require_once("vendor/autoload.php");
+        require_once("connection.php");
+        fullImageImport($selectFields, $rets, $propertyClass, $link);
 
-foreach ($results as $r) {
-    var_dump($r);
+    } elseif ($arguments['m'] == 'update-images') {
+
+        require_once("vendor/autoload.php");
+        require_once("connection.php");
+        updateImages($selectFields, $rets, $propertyClass, $link);
+
+    } elseif ($arguments['m'] == 'purge-images') {
+        require_once("vendor/autoload.php");
+        require_once("connection.php");
+        purgeImages($selectFields, $rets, $propertyClass, $link);
+
+    } else {
+        print "Argument Specified does not exist. Available options are -m full-listing-import, full-image-import, update-listings, update-images, purge-images\r\n";
+    }
+} else {
+    print "Arguments required -m full-listing-import, full-image-import, update-listings, update-images, purge-images\r\n";
+
 }
