@@ -8,6 +8,8 @@
  * -m purge-images
  *
  */
+require_once('db.php');
+
 $arguments = getopt("m:");
 
 if($arguments) {
