@@ -110,7 +110,7 @@ function RedirectToCachedFile() {
 
 // instantiate a new phpThumb() object
 ob_start();
-if (!include_once(dirname(__FILE__).'/phpthumb.class.php')) {
+if (!include_once(dirname(__FILE__) . '/phpthumb.class.php')) {
 	ob_end_flush();
 	die('failed to include_once("'.realpath(dirname(__FILE__).'/phpthumb.class.php').'")');
 }
