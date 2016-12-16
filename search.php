@@ -5,14 +5,22 @@ require_once('phpThumb/phpThumb.config.php');
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET,HEAD,OPTIONS,POST,PUT");
-header("Access-Control-Allow-Headers: accept, access-control-allow-headers, x-angularjs, x-csrf-token");
+header("Access-Control-Allow-Headers: Content-Type, accept, access-control-allow-headers, x-angularjs, x-csrf-token");
 
 $getResults = $_GET;
+
+$postData = json_decode(file_get_contents('php://input'), true);
+
+
+/*
+ * Returning Listing Type Fields
+ */
 if($getResults['list'] == 'listingTypes') {
     $query = "select distinct L_Type_ from Listings";
     $rows = mysqli_query($link, $query);
     while($data = mysqli_fetch_assoc($rows)) {
-        $results[] = $data['L_Type_'];
+        $results[] = array('name' => $data['L_Type_'], 'selected' => false, 'filter' => 'L_Type_');
+
     }
     if(is_array($results)) {
         print json_encode($results);
@@ -21,16 +29,29 @@ if($getResults['list'] == 'listingTypes') {
     }
     die();
 
+} elseif($postData) {
+    foreach($postData as $v=>$k) {
+        if($k['filter'] == "L_Type_" ) {
+            $field = $k['filter'];
+            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+        }
+    }
+
+    $query = "select * from Listings where ".implode(" || ", $queryParts)." and L_City = 'Boise' DESC limit 12 limit 50";
+
 } elseif($getResults) {
+
     foreach($getResults as $k => $v) {
         $searchQueryElements[] = "$k=\"$v\"";
+
+
+
     }
-    $query = "select * from Listings where ".implode(" and ",$searchQueryElements)." limit 50";
+    $query = "select * from Listings where ".implode(" || ",$searchQueryElements)." DESC limit 12 limit 50";
 } else {
     $query = "SELECT * FROM Listings WHERE L_City = 'Boise' ORDER BY L_AskingPrice DESC limit 12";
 
 }
-
 
 
 
@@ -56,5 +77,5 @@ while($data = mysqli_fetch_assoc($rows)) {
 if(is_array($results)) {
     print json_encode($results);
 } else {
-    print "";
+    print $query;
 }
