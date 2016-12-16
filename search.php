@@ -35,9 +35,13 @@ if($getResults['list'] == 'listingTypes') {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
         }
+		if($k['filter'] == "Beds_" ) {
+            $field = $k['filter'];
+            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+        }
     }
-
-    $query = "select * from Listings where ".implode(" || ", $queryParts)." and L_City = 'Boise' limit 20";
+//print_r($queryParts);
+    $query = "select * from Listings where ".implode(" && ", $queryParts)." and L_City = 'Boise' limit 20";
 
 } elseif($getResults) {
 
@@ -47,7 +51,7 @@ if($getResults['list'] == 'listingTypes') {
 
 
     }
-    $query = "select * from Listings where ".implode(" || ",$searchQueryElements)." DESC limit 20";
+    $query = "select * from Listings where ".implode(" && ",$searchQueryElements)." DESC limit 20";
 } else {
     $query = "SELECT * FROM Listings WHERE L_City = 'Boise' and L_Type_ = 'Single Family' and L_AskingPrice between 200000 and 500000 ORDER BY L_AskingPrice DESC limit 20";
 
