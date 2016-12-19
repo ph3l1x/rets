@@ -29,13 +29,35 @@ if($getResults['list'] == 'listingTypes') {
     }
     die();
 
-} elseif($postData) {
+}
+elseif($getResults['list'] == 'citiesList') {
+    $query = "select distinct L_City from Listings";
+    $rows = mysqli_query($link, $query);
+    while($data = mysqli_fetch_assoc($rows)) {
+        $results[] = array('name' => $data['L_City'], 'selected' => false, 'filter' => 'L_City');
+
+    }
+    if(is_array($results)) {
+        print json_encode($results);
+    } else {
+        print "";
+    }
+    die();
+
+}
+
+
+ elseif($postData) {
     foreach($postData as $v=>$k) {
         if($k['filter'] == "L_Type_" ) {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
         }
-		if($k['filter'] == "Beds_" ) {
+		if($k['filter'] == "L_Keyword2" ) {
+            $field = $k['filter'];
+            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+        }
+		if($k['filter'] == "LM_Dec_3" ) {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
         }
