@@ -46,9 +46,29 @@ elseif($getResults['list'] == 'citiesList') {
 
 }
 
+elseif($getResults['list'] == 'search') {
+	$search = $getResults['search'];
+
+    $query = "select distinct L_City from Listings where L_City like '%".$search."%' || L_Zip like '%".$search."%' || LMD_MP_Subdivision like '%".$search."%'"; 
+
+    $rows = mysqli_query($link, $query);
+    while($data = mysqli_fetch_assoc($rows)) {
+        $results[] = array('name' => $data['L_City'], 'selected' => false, 'filter' => 'L_City');
+
+    }
+    if(is_array($results)) {
+        print json_encode($results);
+    } else {
+        print "";
+    }
+    die();
+
+}
+
 
  elseif($postData) {
     foreach($postData as $v=>$k) {
+		//print_r($k);
         if($k['filter'] == "L_Type_" ) {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
@@ -61,9 +81,18 @@ elseif($getResults['list'] == 'citiesList') {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
         }
+		if($k['filter'] == "L_City" ) {
+            $field = $k['filter'];
+            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+        }
+		if($k['filter'] == "L_SystemPrice"){
+            $field = $k['filter'];
+			$price = explode("-",$k['name']);
+            $queryParts[] = "{$k['filter']} BETWEEN {$price[0]} AND {$price[1]}";			
+		}
     }
-//print_r($queryParts);
-    $query = "select * from Listings where ".implode(" && ", $queryParts)." and L_City = 'Boise' limit 20";
+
+    $query = "select * from Listings where ".implode(" && ", $queryParts)." limit 20";
 
 } elseif($getResults) {
 
