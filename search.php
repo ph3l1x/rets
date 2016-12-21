@@ -49,7 +49,7 @@ elseif($getResults['list'] == 'citiesList') {
 elseif($getResults['list'] == 'search') {
 	$search = $getResults['search'];
 
-    $query = "select distinct L_City from Listings where L_City like '%".$search."%' || L_Zip like '%".$search."%' || LMD_MP_Subdivision like '%".$search."%'"; 
+    $query = "select distinct L_City from Listings where L_City like '%".$search."%' || L_Zip like '%".$search."%' || LMD_MP_Subdivision like '%".$search."%' || L_ListingID like '%".$search."%'"; 
 
     $rows = mysqli_query($link, $query);
     while($data = mysqli_fetch_assoc($rows)) {
