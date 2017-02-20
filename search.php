@@ -77,6 +77,10 @@ elseif($getResults['list'] == 'search') {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
         }
+        if($k['filter'] == "L_Remarks" ) {
+            $field = $k['filter'];
+            $queryParts[] = "{$k['filter']} LIKE \"%{$k['name']}%\"";
+        }
 		if($k['filter'] == "LM_Dec_3" ) {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
@@ -89,6 +93,47 @@ elseif($getResults['list'] == 'search') {
             $field = $k['filter'];
 			$price = explode("-",$k['name']);
             $queryParts[] = "{$k['filter']} BETWEEN {$price[0]} AND {$price[1]}";			
+		}
+		if($k['filter'] == "LM_int4_27"){
+            $field = $k['filter'];
+			$sqft = explode("-",$k['name']);
+            $queryParts[] = "{$k['filter']} BETWEEN {$sqft[0]} AND {$sqft[1]}";			
+		}
+		if($k['filter'] == "LM_Int4_1"){
+            $field = $k['filter'];
+			$year = explode("-",$k['name']);
+            $queryParts[] = "{$k['filter']} BETWEEN {$year[0]} AND {$year[1]}";			
+		}
+		
+		if($k['bound'] == "Bounds") {
+		    
+
+            $coords = explode(",", $k['name']);
+            //   La Lo
+            //NE 0, 1
+            //SW 2, 3
+            
+            //where lat > NE and less than SW lat
+        
+            
+            $queryParts[] = "LMD_MP_Latitude BETWEEN {$coords[2]} AND {$coords[0]}";	
+            $queryParts[] = "LMD_MP_Longitude BETWEEN {$coords[3]} AND {$coords[1]}";	
+            
+		}
+		
+		if($k['bound'] == "NortheastBoundLat"){
+            //
+            //
+		}
+		
+		if($k['bound'] == "SouthwestBoundLong"){
+            //
+            //
+		}
+		
+		if($k['bound'] == "SouthwestBoundLat"){
+            //
+            //
 		}
     }
 
