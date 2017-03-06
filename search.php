@@ -48,14 +48,37 @@ elseif($getResults['list'] == 'citiesList') {
 
 elseif($getResults['list'] == 'search') {
 	$search = $getResults['search'];
+    $intval = intval($search);
+    $num_length = strlen((string) $intval);
 
-    $query = "select distinct L_City from Listings where L_City like '%".$search."%' || L_Zip like '%".$search."%' || LMD_MP_Subdivision like '%".$search."%' || L_ListingID like '%".$search."%'"; 
-
-    $rows = mysqli_query($link, $query);
-    while($data = mysqli_fetch_assoc($rows)) {
-        $results[] = array('name' => $data['L_City'], 'selected' => false, 'filter' => 'L_City');
-
+    if ($intval == 0) {
+        //Normal search, return cities.
+        $query = "select distinct L_City from Listings where L_City like '".$search."%' limit 40"; 
+        $rows = mysqli_query($link, $query);
+        
+        while($data = mysqli_fetch_assoc($rows)) {
+            $results[] = array('name' => $data['L_City'], 'selected' => false, 'filter' => 'L_City');
+        }
+    } else {
+        
+        
+        if ($num_length > 5 ) {
+            $query = "select distinct L_ListingID from Listings where L_ListingID like '".$search."%' limit 40"; 
+            $rows = mysqli_query($link, $query);
+            while($data = mysqli_fetch_assoc($rows)) {
+                $results[] = array('name' => $data['L_ListingID'], 'selected' => false, 'filter' => 'L_ListingID');
+            }
+	    } else {
+	        $query = "select distinct L_Zip from Listings where L_Zip like '".$search."%' limit 40"; 
+            $rows = mysqli_query($link, $query);
+            while($data = mysqli_fetch_assoc($rows)) {
+                $results[] = array('name' => $data['L_Zip'], 'selected' => false, 'filter' => 'L_Zip');
+            }
+	    }
     }
+	
+    
+    
     if(is_array($results)) {
         print json_encode($results);
     } else {
@@ -69,6 +92,10 @@ elseif($getResults['list'] == 'search') {
  elseif($postData) {
     foreach($postData as $v=>$k) {
 		//print_r($k);
+		if($k['filter'] == "L_ListingID" ) {
+            $field = $k['filter'];
+            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+        }
         if($k['filter'] == "L_Type_" ) {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
@@ -92,6 +119,11 @@ elseif($getResults['list'] == 'search') {
 		if($k['filter'] == "L_SystemPrice"){
             $field = $k['filter'];
 			$price = explode("-",$k['name']);
+			
+			if ($price[1] > 999999) {
+			    $price[1] = 99999999;
+			}
+			
             $queryParts[] = "{$k['filter']} BETWEEN {$price[0]} AND {$price[1]}";			
 		}
 		if($k['filter'] == "LM_int4_27"){
@@ -106,38 +138,17 @@ elseif($getResults['list'] == 'search') {
 		}
 		
 		if($k['bound'] == "Bounds") {
-		    
 
             $coords = explode(",", $k['name']);
-            //   La Lo
-            //NE 0, 1
-            //SW 2, 3
-            
-            //where lat > NE and less than SW lat
         
             
             $queryParts[] = "LMD_MP_Latitude BETWEEN {$coords[2]} AND {$coords[0]}";	
             $queryParts[] = "LMD_MP_Longitude BETWEEN {$coords[3]} AND {$coords[1]}";	
             
 		}
-		
-		if($k['bound'] == "NortheastBoundLat"){
-            //
-            //
-		}
-		
-		if($k['bound'] == "SouthwestBoundLong"){
-            //
-            //
-		}
-		
-		if($k['bound'] == "SouthwestBoundLat"){
-            //
-            //
-		}
     }
 
-    $query = "select * from Listings where ".implode(" && ", $queryParts)." limit 20";
+    $query = "select * from Listings where ".implode(" && ", $queryParts)." limit 40";
 
 } elseif($getResults) {
 
@@ -147,9 +158,9 @@ elseif($getResults['list'] == 'search') {
 
 
     }
-    $query = "select * from Listings where ".implode(" && ",$searchQueryElements)." DESC limit 20";
+    $query = "select * from Listings where ".implode(" && ",$searchQueryElements)." DESC limit 40";
 } else {
-    $query = "SELECT * FROM Listings WHERE L_City = 'Boise' and L_Type_ = 'Single Family' and L_AskingPrice between 200000 and 500000 ORDER BY L_AskingPrice DESC limit 20";
+    $query = "SELECT * FROM Listings WHERE L_City = 'Boise' and L_Type_ = 'Single Family' and L_AskingPrice between 200000 and 500000 ORDER BY L_AskingPrice DESC limit 40";
 
 }
 
