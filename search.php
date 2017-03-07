@@ -98,7 +98,19 @@ elseif($getResults['list'] == 'search') {
         }
         if($k['filter'] == "L_Type_" ) {
             $field = $k['filter'];
-            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+            $temp = explode(",", $k['name']);
+            
+            $query = "(";
+            for ($i = 0; $i < count($temp); $i++) {
+                if ($i == count($temp)-1) {
+                    $query .= "\"" . $temp[$i] . "\"";
+                } else {
+                    $query .= "\"" . $temp[$i] . "\",";
+                }
+            }
+            $query .= ")";
+            
+            $queryParts[] = "{$k['filter']} IN " . $query;
         }
 		if($k['filter'] == "L_Keyword2" ) {
             $field = $k['filter'];
@@ -137,7 +149,7 @@ elseif($getResults['list'] == 'search') {
             $queryParts[] = "{$k['filter']} BETWEEN {$year[0]} AND {$year[1]}";			
 		}
 		
-		if($k['bound'] == "Bounds") {
+		if($k['bound'] == "Bounds" || $k['filter'] == "Bounds") {
 
             $coords = explode(",", $k['name']);
         
@@ -149,6 +161,7 @@ elseif($getResults['list'] == 'search') {
     }
 
     $query = "select * from Listings where ".implode(" && ", $queryParts)." limit 40";
+    //print $query; die();
 
 } elseif($getResults) {
 
