@@ -5,6 +5,9 @@ require_once('phpThumb/phpThumb.config.php');
 
 $action = $_GET['action'];
 
+function getOfficeName($officeID)) {
+
+}
 if ($action == 'least_expensive') {
   $query = 'SELECT * FROM `Listings` WHERE L_CITY="Boise" ORDER BY L_SystemPrice DESC LIMIT 10';
   $rows = mysqli_query($link, $query);
@@ -23,6 +26,11 @@ if ($action == 'least_expensive') {
   $rows = mysqli_query($link, $query);
   while ($data = mysqli_fetch_assoc($rows)) {
     $results = $data;
+  }
+  if($results['L_ListingID']) {
+    foreach (glob("images/" . $results['L_ListingID'] . '*.jpg') as $image) {
+      $results['ALL_IMAGES'][] = $image;
+    }
   }
 
   print json_encode($results);

@@ -43,10 +43,15 @@ if($arguments) {
         require_once("connection.php");
         purgeImages($selectFields, $rets, $propertyClass, $link);
 
+    } elseif ($arguments['m'] == 'office-import') {
+      require_once("vendor/autoload.php");
+      require_once("connection.php");
+      officeImport($officeFields, $rets, $officeClass, $link);
+
     } else {
-        print "Argument Specified does not exist. Available options are -m full-listing-import, full-image-import, update-listings, update-images, purge-images\r\n";
+        print "Argument Specified does not exist. Available options are -m full-listing-import, full-image-import, update-listings, update-images, purge-images, office-import\r\n";
     }
 } else {
-    print "Arguments required -m full-listing-import, full-image-import, update-listings, update-images, purge-images\r\n";
+    print "Arguments required -m full-listing-import, full-image-import, update-listings, update-images, purge-images, office-import\r\n";
 
 }
