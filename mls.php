@@ -5,18 +5,53 @@ require_once('phpThumb/phpThumb.config.php');
 
 $action = $_GET['action'];
 
-function getOfficeName($officeID)) {
+function getOfficeName($officeID) {
 
 }
 if ($action == 'least_expensive') {
-  $query = 'SELECT * FROM `Listings` WHERE L_CITY="Boise" ORDER BY L_SystemPrice DESC LIMIT 10';
+  $query = 'SELECT * FROM `Listings` WHERE L_CITY="Boise" ORDER BY CONVERT(`L_SystemPrice`, DECIMAL) ASC LIMIT 30';
   $rows = mysqli_query($link, $query);
   $results = array();
   while($data = mysqli_fetch_assoc($rows)) {
-    $data['L_IMAGES'] = phpThumbURL("src=/var/www/rets.mindimage.net/images/{$data['L_ListingID']}-1.jpg&w=100&zc=c", 'phpThumb/phpThumb.php');
-    $results[] = $data;
+    if(file_exists('images/' . $data['L_ListingID'] . '-1.jpg')) {
+      $data['L_IMAGES'] = phpThumbURL("src=/var/www/rets.mindimage.net/images/{$data['L_ListingID']}-1.jpg&w=100&zc=c", 'phpThumb/phpThumb.php');
+      $results[] = $data;
+    }
   }
 
+  print json_encode($results);
+} elseif ($action == 'most_expensive') {
+  $query = 'SELECT * FROM `Listings` WHERE L_CITY="Boise" ORDER BY CONVERT(`L_SystemPrice`, DECIMAL) DESC LIMIT 30';
+  $rows = mysqli_query($link, $query);
+  $results = array();
+  while ($data = mysqli_fetch_assoc($rows)) {
+    if (file_exists('images/' . $data['L_ListingID'] . '-1.jpg')) {
+      $data['L_IMAGES'] = phpThumbURL("src=/var/www/rets.mindimage.net/images/{$data['L_ListingID']}-1.jpg&w=100&zc=c", 'phpThumb/phpThumb.php');
+      $results[] = $data;
+    }
+  }
+  print json_encode($results);
+} elseif ($action == 'newest') {
+  $query = 'SELECT * FROM `Listings` WHERE L_CITY="Boise" ORDER BY `L_ListingDate` DESC LIMIT 30';
+  $rows = mysqli_query($link, $query);
+  $results = array();
+  while ($data = mysqli_fetch_assoc($rows)) {
+    if (file_exists('images/' . $data['L_ListingID'] . '-1.jpg')) {
+      $data['L_IMAGES'] = phpThumbURL("src=/var/www/rets.mindimage.net/images/{$data['L_ListingID']}-1.jpg&w=100&zc=c", 'phpThumb/phpThumb.php');
+      $results[] = $data;
+    }
+  }
+  print json_encode($results);
+} elseif ($action == 'updated') {
+  $query = 'SELECT * FROM `Listings` WHERE L_CITY="Boise" ORDER BY `L_UpdateDate` DESC LIMIT 30';
+  $rows = mysqli_query($link, $query);
+  $results = array();
+  while ($data = mysqli_fetch_assoc($rows)) {
+    if (file_exists('images/' . $data['L_ListingID'] . '-1.jpg')) {
+      $data['L_IMAGES'] = phpThumbURL("src=/var/www/rets.mindimage.net/images/{$data['L_ListingID']}-1.jpg&w=100&zc=c", 'phpThumb/phpThumb.php');
+      $results[] = $data;
+    }
+  }
   print json_encode($results);
 } else {
 
