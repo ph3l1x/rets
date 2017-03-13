@@ -114,7 +114,7 @@ elseif($getResults['list'] == 'search') {
         }
 		if($k['filter'] == "L_Keyword2" ) {
             $field = $k['filter'];
-            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+            $queryParts[] = "{$k['filter']} >= \"{$k['name']}\"";
         }
         if($k['filter'] == "L_Remarks" ) {
             $field = $k['filter'];
@@ -122,9 +122,13 @@ elseif($getResults['list'] == 'search') {
         }
 		if($k['filter'] == "LM_Dec_3" ) {
             $field = $k['filter'];
-            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+            $queryParts[] = "{$k['filter']} >= \"{$k['name']}\"";
         }
 		if($k['filter'] == "L_City" ) {
+            $field = $k['filter'];
+            $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
+        }
+        if($k['filter'] == "L_Zip" ) {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
         }

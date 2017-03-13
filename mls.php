@@ -5,8 +5,13 @@ require_once('phpThumb/phpThumb.config.php');
 
 $action = $_GET['action'];
 
-function getOfficeName($officeID) {
-
+function getOfficeName($officeID, $link) {
+  $query = "select * from Offices where `O_OfficeID`= {$officeID}";
+  $rows = mysqli_query($link, $query);
+  while($data = mysqli_fetch_assoc($rows)) {
+    $results = $data;
+  }
+  return $results;
 }
 if ($action == 'least_expensive') {
   $query = 'SELECT * FROM `Listings` WHERE L_CITY="Boise" ORDER BY CONVERT(`L_SystemPrice`, DECIMAL) ASC LIMIT 30';
@@ -56,11 +61,13 @@ if ($action == 'least_expensive') {
 } else {
 
   $query = 'SELECT * FROM `Listings` WHERE L_ListingID="' . $_POST['mls'] . '"';
-//$query = 'SELECT * FROM `Listings` WHERE L_ListingID="98640789"';
+//  $query = 'SELECT * FROM `Listings` WHERE L_ListingID="98635521"';
   $results = array();
+  $officeData = array();
   $rows = mysqli_query($link, $query);
   while ($data = mysqli_fetch_assoc($rows)) {
     $results = $data;
+    $officeData = getOfficeName($data['L_ListOffice1'], $link);
   }
   if($results['L_ListingID']) {
     foreach (glob("images/" . $results['L_ListingID'] . '*.jpg') as $image) {
@@ -68,5 +75,5 @@ if ($action == 'least_expensive') {
     }
   }
 
-  print json_encode($results);
+  print json_encode(array_merge($results, $officeData));
 }
