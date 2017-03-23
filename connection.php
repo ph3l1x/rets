@@ -164,7 +164,7 @@ function updateImages($selectFields, $rets, $propertyClass, $link) {
 
         $objects = $rets->GetObject('Property', 'Photo',  $mlsNewPhotos);
         foreach($objects as $object) {
-            file_put_contents("images/{$object->getContentId()}-{$object->getObjectId()}.jpg", $object->getContent());
+            file_put_contents("/var/www/rets.mindimage.net/images/{$object->getContentId()}-{$object->getObjectId()}.jpg", $object->getContent());
         }
 
         print "Added Photos for (".$count.") -> ".$mlsNewPhotos."\r";

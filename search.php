@@ -7,6 +7,8 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET,HEAD,OPTIONS,POST,PUT");
 header("Access-Control-Allow-Headers: Content-Type, accept, access-control-allow-headers, x-angularjs, x-csrf-token");
 
+//print("hi"); die();
+
 $getResults = $_GET;
 
 $postData = json_decode(file_get_contents('php://input'), true);
@@ -50,6 +52,7 @@ elseif($getResults['list'] == 'search') {
 	$search = $getResults['search'];
     $intval = intval($search);
     $num_length = strlen((string) $intval);
+    
 
     if ($intval == 0) {
         //Normal search, return cities.
@@ -90,8 +93,8 @@ elseif($getResults['list'] == 'search') {
 
 
  elseif($postData) {
+     
     foreach($postData as $v=>$k) {
-		//print_r($k);
 		if($k['filter'] == "L_ListingID" ) {
             $field = $k['filter'];
             $queryParts[] = "{$k['filter']}=\"{$k['name']}\"";
@@ -176,8 +179,10 @@ elseif($getResults['list'] == 'search') {
 
     }
     $query = "select * from Listings where ".implode(" && ",$searchQueryElements)." DESC limit 40";
+    //print $query; die();
 } else {
     $query = "SELECT * FROM Listings WHERE L_City = 'Boise' and L_Type_ = 'Single Family' and L_AskingPrice between 200000 and 500000 ORDER BY L_AskingPrice DESC limit 40";
+    //print $query; die();
 
 }
 
